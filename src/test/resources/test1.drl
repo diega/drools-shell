@@ -1,1 +1,8 @@
 package shell.test1
+
+rule "test rule"
+when
+    eval(true)
+then
+    System.out.println("drools shell");
+end

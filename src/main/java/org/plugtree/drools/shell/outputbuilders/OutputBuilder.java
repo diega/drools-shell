@@ -5,5 +5,7 @@ package org.plugtree.drools.shell.outputbuilders;
  */
 public interface OutputBuilder<T> {
 
-    public String getOutput(T input);
+    static final String CR = System.getProperty("line.separator");
+
+    String getOutput(T input);
 }
