@@ -1,18 +1,18 @@
 package org.plugtree.drools.shell;
 
 import org.drools.command.Command;
-import org.drools.definition.KnowledgePackage;
-import org.drools.definition.rule.Rule;
 import org.drools.runtime.StatefulKnowledgeSession;
-import org.plugtree.drools.shell.commands.ExtraCommands;
+import org.plugtree.drools.commands.RulesByPackageCommand;
+import org.plugtree.drools.commands.RulesForPackageCommand;
+import org.plugtree.drools.shell.commands.CliCommand;
+import org.plugtree.drools.shell.commands.ListRulesCliCommand;
 import org.plugtree.drools.shell.exceptions.CommandNotFoundException;
-import org.plugtree.drools.shell.outputbuilders.KnowledgePackageCollectionOutputBuilder;
 import org.plugtree.drools.shell.outputbuilders.OutputBuilder;
-import org.plugtree.drools.shell.outputbuilders.RulesOutputBuilder;
+import org.plugtree.drools.shell.outputbuilders.RulesByPackageOutputBuilder;
+import org.plugtree.drools.shell.outputbuilders.RulesForPackageOutputBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,8 +21,8 @@ import java.util.Map;
  */
 public class DroolsShell {
 
-    private static Map<String, Command> commands;
-    private static Map<Command, OutputBuilder> outputBuilders;
+    private static Map<String, CliCommand> commands;
+    private static Map<Class<? extends Command<?>>, OutputBuilder<?>> outputBuilders;
     private StatefulKnowledgeSession currentSession;
 
     private static final Logger logger = LoggerFactory.getLogger(DroolsShell.class);
@@ -31,23 +31,29 @@ public class DroolsShell {
         this.currentSession = ksession;
     }
 
-    public String run(String inputCommand) throws CommandNotFoundException{
-        Command command = commands.get(inputCommand);
-        if(null == command)
-            throw new CommandNotFoundException(inputCommand + ": command not found");
-        return outputBuilders.get(command).getOutput(currentSession.execute(command));
+    public String run(String inputCommand, String... args) throws CommandNotFoundException{
+        CliCommand cliCommand = commands.get(inputCommand);
+        if(null == cliCommand)
+            throw new CommandNotFoundException(inputCommand);
+        final Command<?> command = cliCommand.getCommand(args);
+        final OutputBuilder outputBuilder = outputBuilders.get(command.getClass());
+        Object executionResult = null;
+        try {
+            executionResult = currentSession.execute(command);
+        } catch (Exception e){
+            logger.trace("error executing command", e);
+            return e.getMessage();
+        }
+        return outputBuilder.getOutput(executionResult);
     }
 
     static{
-        final Command<Collection<KnowledgePackage>> packagesListCommand = ExtraCommands.getPackagesListCommand();
-        final Command<Map<KnowledgePackage, Collection<Rule>>> rulesListCommand = ExtraCommands.getRulesListCommand();
-        commands = new HashMap<String, Command>(){{
-            put("lspackage", packagesListCommand);
-            put("lsrules", rulesListCommand);
+        commands = new HashMap<String, CliCommand>(){{
+            put("lsrules", new ListRulesCliCommand());
         }};
-        outputBuilders = new HashMap<Command, OutputBuilder>(){{
-            put(packagesListCommand, new KnowledgePackageCollectionOutputBuilder());
-            put(rulesListCommand, new RulesOutputBuilder());
+        outputBuilders = new HashMap<Class<? extends Command<?>>, OutputBuilder<?>>(){{
+            put(RulesByPackageCommand.class, new RulesByPackageOutputBuilder());
+            put(RulesForPackageCommand.class, new RulesForPackageOutputBuilder());
         }};
     }
 }

@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -35,7 +37,18 @@ public class DroolsShellCli {
 
         while ((line = reader.readLine("drools> ")) != null) {
             try{
-                out.print(shell.run(line));
+                final int firstSpace = line.indexOf(" ");
+                String command = null;
+                String[] args = null;
+                if(-1 == firstSpace) {
+                    command = line;
+                    args = new String[]{};
+                } else {
+                    command = line.substring(0, firstSpace);
+                    args = line.substring(firstSpace + 1).split(" ");
+                }
+                logger.debug("command: {} | args {}", command, Arrays.toString(args));
+                out.print(shell.run(command, args));
             } catch (CommandNotFoundException cnfe) {
                 out.print(cnfe.getMessage());
             }
