@@ -9,6 +9,8 @@ import org.plugtree.drools.shell.exceptions.CommandNotFoundException;
 import org.plugtree.drools.shell.outputbuilders.KnowledgePackageCollectionOutputBuilder;
 import org.plugtree.drools.shell.outputbuilders.OutputBuilder;
 import org.plugtree.drools.shell.outputbuilders.RulesOutputBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -22,6 +24,8 @@ public class DroolsShell {
     private static Map<String, Command> commands;
     private static Map<Command, OutputBuilder> outputBuilders;
     private StatefulKnowledgeSession currentSession;
+
+    private static final Logger logger = LoggerFactory.getLogger(DroolsShell.class);
 
     public DroolsShell(StatefulKnowledgeSession ksession) {
         this.currentSession = ksession;

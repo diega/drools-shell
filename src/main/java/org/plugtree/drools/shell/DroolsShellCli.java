@@ -4,6 +4,8 @@ import jline.ConsoleReader;
 import org.plugtree.drools.ext.KnowledgeBaseProvider;
 import org.plugtree.drools.ext.KnowledgeBaseProviderFromInputStreams;
 import org.plugtree.drools.shell.exceptions.CommandNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -18,6 +20,7 @@ import java.util.List;
 public class DroolsShellCli {
 
     private DroolsShell shell;
+    private static final Logger logger = LoggerFactory.getLogger(DroolsShellCli.class);
 
     public DroolsShellCli(KnowledgeBaseProvider kbaseProvider) {
         this.shell = new DroolsShell(kbaseProvider.getKnowledgeBase().newStatefulKnowledgeSession());
