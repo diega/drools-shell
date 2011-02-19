@@ -5,7 +5,9 @@ import joptsimple.*;
 import org.drools.command.Command;
 import org.plugtree.drools.commands.RulesByPackageCommand;
 import org.plugtree.drools.commands.RulesForPackageCommand;
+import org.plugtree.drools.shell.exceptions.UnknownArgumentException;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
@@ -28,8 +30,15 @@ public class ListRulesCliCommand implements CliCommand {
     }
 
     @Override
-    public Command<?> getCommand(String... args) {
-        final OptionSet optionSet = parser.parse(args);
+    public Command<?> getCommand(String... args) throws UnknownArgumentException {
+        OptionSet optionSet = null;
+        try {
+            optionSet = parser.parse(args);
+        } catch (OptionException oe) {
+            throw new UnknownArgumentException(new ArrayList<String>(oe.options()));
+        }
+        if(!optionSet.nonOptionArguments().isEmpty())
+            throw new UnknownArgumentException(optionSet.nonOptionArguments());
         if(optionSet.has(packageNameOpt)){
             String packageName = packageNameOpt.value(optionSet);
             return new RulesForPackageCommand(packageName);

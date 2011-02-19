@@ -2,6 +2,7 @@ package org.plugtree.drools.shell.commands;
 
 import jline.Completor;
 import org.drools.command.Command;
+import org.plugtree.drools.shell.exceptions.UnknownArgumentException;
 
 import java.util.List;
 
@@ -12,5 +13,5 @@ public interface CliCommand {
 
     Completor getCompletor();
 
-    Command<?> getCommand(String... args);
+    Command<?> getCommand(String... args) throws UnknownArgumentException;
 }
