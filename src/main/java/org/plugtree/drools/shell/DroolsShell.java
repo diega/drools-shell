@@ -7,6 +7,7 @@ import org.plugtree.drools.commands.RulesForPackageCommand;
 import org.plugtree.drools.shell.commands.CliCommand;
 import org.plugtree.drools.shell.commands.ListRulesCliCommand;
 import org.plugtree.drools.shell.exceptions.CommandNotFoundException;
+import org.plugtree.drools.shell.exceptions.HelpRequestedException;
 import org.plugtree.drools.shell.exceptions.UnknownArgumentException;
 import org.plugtree.drools.shell.outputbuilders.OutputBuilder;
 import org.plugtree.drools.shell.outputbuilders.RulesByPackageOutputBuilder;
@@ -42,6 +43,8 @@ public class DroolsShell {
         } catch (UnknownArgumentException uae) {
             logger.trace("unknown argument", uae);
             return uae.getMessage();
+        } catch (HelpRequestedException hre) {
+            return hre.getHelpMessage();
         }
         
         final OutputBuilder outputBuilder = outputBuilders.get(command.getClass());
