@@ -1,6 +1,7 @@
 package org.plugtree.drools.shell;
 
 import jline.ConsoleReader;
+import jline.SimpleCompletor;
 import org.plugtree.drools.ext.KnowledgeBaseProvider;
 import org.plugtree.drools.ext.KnowledgeBaseProviderFromInputStreams;
 import org.plugtree.drools.shell.exceptions.CommandNotFoundException;
@@ -11,10 +12,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * creation date: 2/17/11
@@ -31,6 +29,8 @@ public class DroolsShellCli {
     public void run() throws IOException {
         ConsoleReader reader = new ConsoleReader();
         reader.setBellEnabled(false);
+        final Set<String> cliCommandNames = shell.getCliCommandNames();
+        reader.addCompletor(new SimpleCompletor(cliCommandNames.toArray(new String[cliCommandNames.size()])));
 
         String line;
         PrintWriter out = new PrintWriter(System.out);

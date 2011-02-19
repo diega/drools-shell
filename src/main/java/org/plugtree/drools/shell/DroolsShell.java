@@ -15,8 +15,7 @@ import org.plugtree.drools.shell.outputbuilders.RulesForPackageOutputBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * creation date: 2/17/11
@@ -56,6 +55,10 @@ public class DroolsShell {
             return e.getMessage();
         }
         return outputBuilder.getOutput(executionResult);
+    }
+
+    public Set<String> getCliCommandNames(){
+        return Collections.unmodifiableSet(commands.keySet());
     }
 
     static{
