@@ -6,9 +6,20 @@ import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
 import joptsimple.OptionSpecBuilder;
+import org.drools.command.Command;
+import org.plugtree.drools.commands.DummyCommand;
+import org.plugtree.drools.commands.RulesByPackageCommand;
+import org.plugtree.drools.commands.RulesForPackageCommand;
 import org.plugtree.drools.ext.KnowledgeBaseProvider;
 import org.plugtree.drools.ext.KnowledgeBaseProviderFromInputStreams;
+import org.plugtree.drools.shell.commands.CliCommand;
+import org.plugtree.drools.shell.commands.InsertFactCliCommand;
+import org.plugtree.drools.shell.commands.ListRulesCliCommand;
 import org.plugtree.drools.shell.exceptions.CommandNotFoundException;
+import org.plugtree.drools.shell.outputbuilders.OutputBuilder;
+import org.plugtree.drools.shell.outputbuilders.RulesByPackageOutputBuilder;
+import org.plugtree.drools.shell.outputbuilders.RulesForPackageOutputBuilder;
+import org.plugtree.drools.shell.outputbuilders.StringOutputBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,17 +34,28 @@ import java.util.*;
 public class DroolsShellCli {
 
     private DroolsShell shell;
+    private ConsoleReader reader;
     private static final Logger logger = LoggerFactory.getLogger(DroolsShellCli.class);
 
-    public DroolsShellCli(KnowledgeBaseProvider kbaseProvider) {
-        this.shell = new DroolsShell(kbaseProvider.getKnowledgeBase().newStatefulKnowledgeSession());
+    public DroolsShellCli(KnowledgeBaseProvider kbaseProvider) throws IOException {
+        this.reader = new ConsoleReader();
+        this.reader.setBellEnabled(false);
+        HashMap<String,CliCommand> commands = new HashMap<String, CliCommand>() {{
+            put("lsrules", new ListRulesCliCommand());
+            put("insert", new InsertFactCliCommand(reader));
+        }};
+        HashMap<Class<? extends Command<?>>,OutputBuilder<?>> outputBuilders = new HashMap<Class<? extends Command<?>>, OutputBuilder<?>>() {{
+            put(RulesByPackageCommand.class, new RulesByPackageOutputBuilder());
+            put(RulesForPackageCommand.class, new RulesForPackageOutputBuilder());
+            put(DummyCommand.class, new StringOutputBuilder());
+        }};
+        Set<String> cliCommandNames = commands.keySet();
+        this.reader.addCompletor(new SimpleCompletor(cliCommandNames.toArray(new String[cliCommandNames.size()])));
+
+        this.shell = new DroolsShell(kbaseProvider.getKnowledgeBase().newStatefulKnowledgeSession(), commands, outputBuilders);
     }
 
     public void run() throws IOException {
-        ConsoleReader reader = new ConsoleReader();
-        reader.setBellEnabled(false);
-        final Set<String> cliCommandNames = shell.getCliCommandNames();
-        reader.addCompletor(new SimpleCompletor(cliCommandNames.toArray(new String[cliCommandNames.size()])));
 
         String line;
         PrintWriter out = new PrintWriter(System.out);
