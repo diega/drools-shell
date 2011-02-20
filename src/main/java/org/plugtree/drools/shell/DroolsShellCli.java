@@ -37,6 +37,10 @@ public class DroolsShellCli {
 
         while ((line = reader.readLine("drools> ")) != null) {
             line = line.trim();
+
+            if("".equals(line))
+                continue;
+
             try{
                 final int firstSpace = line.indexOf(" ");
                 String command = null;
