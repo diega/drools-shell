@@ -10,6 +10,8 @@ import java.util.Collection;
 public class RulesForPackageOutputBuilder implements OutputBuilder<Collection<Rule>> {
     @Override
     public String getOutput(Collection<Rule> input) {
+        if(input.isEmpty())
+            return "There are no rules in the requested package";
         StringBuilder builder = new StringBuilder();
         for(Rule rule : input){
             builder.append("-");

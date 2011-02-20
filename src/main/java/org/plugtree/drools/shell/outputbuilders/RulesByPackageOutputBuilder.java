@@ -12,6 +12,8 @@ import java.util.Map;
 public class RulesByPackageOutputBuilder implements OutputBuilder<Map<KnowledgePackage,Collection<Rule>>>{
     @Override
     public String getOutput(Map<KnowledgePackage, Collection<Rule>> input) {
+        if(input.isEmpty())
+            return "There are no rules in the knowledge base";
         StringBuilder builder = new StringBuilder();
         for(Map.Entry<KnowledgePackage, Collection<Rule>> entry : input.entrySet()){
             builder.append("-");
