@@ -13,6 +13,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.*;
 
 /**
@@ -72,6 +74,8 @@ public class DroolsShellCli {
         final OptionSpec<Void> helpOption = parser.acceptsAll(Arrays.asList(new String[]{"?", "help", "h"}), "This help");
         final OptionSpec<File> rulesOption = parser.acceptsAll(Arrays.asList(new String[]{"r","rules"}), "List of rule files (using : as separator)")
                 .withRequiredArg().ofType(File.class).withValuesSeparatedBy(':');
+        final OptionSpec<File> domainOption = parser.acceptsAll(Arrays.asList(new String[]{"d", "domain"}), "Jar file with domain classes")
+                .withRequiredArg().ofType(File.class);
 
         final OptionSet optionSet = parser.parse(args);
         if(optionSet.has(helpOption)){
@@ -84,6 +88,15 @@ public class DroolsShellCli {
         for(File rule : ruleFiles) {
             rules.add(new FileInputStream(rule));
         }
+
+        if(optionSet.has(domainOption)){
+            final File domainJar = optionSet.valueOf(domainOption);
+            final ClassLoader currentClassLoader = Thread.currentThread().getContextClassLoader();
+            URLClassLoader urlClassLoader = new URLClassLoader(new URL[]{domainJar.toURI().toURL()},
+                                            currentClassLoader);
+            Thread.currentThread().setContextClassLoader(urlClassLoader);
+        }
+
         DroolsShellCli shell = new DroolsShellCli(new KnowledgeBaseProviderFromInputStreams(rules));
         shell.run();
     }
