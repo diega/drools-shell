@@ -12,7 +12,7 @@
       <fileMode>0644</fileMode>
     </file>
     <file>
-      <source>src/main/exe/run.sh</source>
+      <source>src/main/exe/drools.sh</source>
       <fileMode>0744</fileMode>
       <filtered>true</filtered>
     </file>
