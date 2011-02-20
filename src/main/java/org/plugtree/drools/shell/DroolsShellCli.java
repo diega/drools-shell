@@ -2,16 +2,17 @@ package org.plugtree.drools.shell;
 
 import jline.ConsoleReader;
 import jline.SimpleCompletor;
+import joptsimple.OptionParser;
+import joptsimple.OptionSet;
+import joptsimple.OptionSpec;
+import joptsimple.OptionSpecBuilder;
 import org.plugtree.drools.ext.KnowledgeBaseProvider;
 import org.plugtree.drools.ext.KnowledgeBaseProviderFromInputStreams;
 import org.plugtree.drools.shell.exceptions.CommandNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.*;
 
 /**
@@ -67,8 +68,20 @@ public class DroolsShellCli {
     }
 
     public static void main(String[] args) throws IOException {
+        OptionParser parser = new OptionParser();
+        final OptionSpec<Void> helpOption = parser.acceptsAll(Arrays.asList(new String[]{"?", "help", "h"}), "This help");
+        final OptionSpec<File> rulesOption = parser.acceptsAll(Arrays.asList(new String[]{"r","rules"}), "List of rule files (using : as separator)")
+                .withRequiredArg().ofType(File.class).withValuesSeparatedBy(':');
+
+        final OptionSet optionSet = parser.parse(args);
+        if(optionSet.has(helpOption)){
+            parser.printHelpOn(System.out);
+            return;
+        }
+
+        List<File> ruleFiles = optionSet.valuesOf(rulesOption);
         List<InputStream> rules = new ArrayList<InputStream>();
-        for(String rule : args) {
+        for(File rule : ruleFiles) {
             rules.add(new FileInputStream(rule));
         }
         DroolsShellCli shell = new DroolsShellCli(new KnowledgeBaseProviderFromInputStreams(rules));
