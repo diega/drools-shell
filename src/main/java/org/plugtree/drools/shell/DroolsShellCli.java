@@ -7,6 +7,7 @@ import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
 import joptsimple.OptionSpecBuilder;
 import org.drools.command.Command;
+import org.drools.command.runtime.rule.GetObjectsCommand;
 import org.drools.command.runtime.rule.InsertObjectCommand;
 import org.plugtree.drools.commands.DummyCommand;
 import org.plugtree.drools.commands.RulesByPackageCommand;
@@ -15,6 +16,7 @@ import org.plugtree.drools.ext.KnowledgeBaseProvider;
 import org.plugtree.drools.ext.KnowledgeBaseProviderFromInputStreams;
 import org.plugtree.drools.shell.commands.CliCommand;
 import org.plugtree.drools.shell.commands.InsertFactCliCommand;
+import org.plugtree.drools.shell.commands.ListFactsCliCommand;
 import org.plugtree.drools.shell.commands.ListRulesCliCommand;
 import org.plugtree.drools.shell.exceptions.CommandNotFoundException;
 import org.plugtree.drools.shell.outputbuilders.*;
@@ -41,11 +43,13 @@ public class DroolsShellCli {
         HashMap<String,CliCommand> commands = new HashMap<String, CliCommand>() {{
             put("lsrules", new ListRulesCliCommand());
             put("insert", new InsertFactCliCommand(reader));
+            put("lsfacts", new ListFactsCliCommand());
         }};
         HashMap<Class<? extends Command<?>>,OutputBuilder<?>> outputBuilders = new HashMap<Class<? extends Command<?>>, OutputBuilder<?>>() {{
             put(RulesByPackageCommand.class, new RulesByPackageOutputBuilder());
             put(RulesForPackageCommand.class, new RulesForPackageOutputBuilder());
             put(InsertObjectCommand.class, new FactHandlerOutputBuilder());
+            put(GetObjectsCommand.class, new ToStringOutputBuilder());
         }};
         Set<String> cliCommandNames = commands.keySet();
         this.reader.addCompletor(new SimpleCompletor(cliCommandNames.toArray(new String[cliCommandNames.size()])));
