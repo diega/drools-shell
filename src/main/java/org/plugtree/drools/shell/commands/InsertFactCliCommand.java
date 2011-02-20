@@ -7,12 +7,16 @@ import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
 import org.drools.command.Command;
+import org.drools.command.runtime.rule.InsertObjectCommand;
+import org.mvel2.CompileException;
 import org.mvel2.MVEL;
 import org.plugtree.drools.commands.DummyCommand;
 import org.plugtree.drools.commands.RulesByPackageCommand;
 import org.plugtree.drools.commands.RulesForPackageCommand;
 import org.plugtree.drools.shell.exceptions.HelpRequestedException;
 import org.plugtree.drools.shell.exceptions.UnknownArgumentException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -29,6 +33,8 @@ public class InsertFactCliCommand extends CliCommandSupport {
     private OptionParser parser;
     private OptionSpec<String> classNameOpt;
     private OptionSpec<Void> helpOpt;
+
+    private static final Logger logger = LoggerFactory.getLogger(InsertFactCliCommand.class);
 
     public InsertFactCliCommand(ConsoleReader reader) {
         this.reader = reader;
@@ -87,7 +93,13 @@ public class InsertFactCliCommand extends CliCommandSupport {
             reader.addCompletor(completor);
         }
 
-        return new DummyCommand(MVEL.eval(createMvelExpression(className, fields)));
+        try{
+            final Object outputObject = MVEL.eval(createMvelExpression(className, fields));
+            return new InsertObjectCommand(outputObject);
+        } catch (CompileException re) {
+            logger.error("error evaluating mvel expression", re);
+            throw new IllegalArgumentException("Error creating object. Check logs for complete stacktrace");
+        }
     }
 
     private String createMvelExpression(String className, List<String> fieldExpressions){
