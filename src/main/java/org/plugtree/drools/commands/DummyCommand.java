@@ -8,8 +8,15 @@ import org.drools.command.impl.GenericCommand;
  * creation date: 2/20/11
  */
 public class DummyCommand implements GenericCommand<String> {
+
+    private Object outputObject;
+
+    public DummyCommand(Object outputObject) {
+        this.outputObject = outputObject;
+    }
+
     @Override
     public String execute(Context context) {
-        return "dummy command executed";
+        return "Dummy output: " + outputObject.toString();
     }
 }
