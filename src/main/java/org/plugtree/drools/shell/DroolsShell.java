@@ -1,5 +1,6 @@
 package org.plugtree.drools.shell;
 
+import jline.ConsoleReader;
 import org.drools.command.Command;
 import org.drools.runtime.StatefulKnowledgeSession;
 import org.plugtree.drools.commands.RulesByPackageCommand;
@@ -22,14 +23,16 @@ import java.util.*;
  */
 public class DroolsShell {
 
-    private static Map<String, CliCommand> commands;
-    private static Map<Class<? extends Command<?>>, OutputBuilder<?>> outputBuilders;
+    private Map<String, CliCommand> commands;
+    private Map<Class<? extends Command<?>>, OutputBuilder<?>> outputBuilders;
     private StatefulKnowledgeSession currentSession;
 
     private static final Logger logger = LoggerFactory.getLogger(DroolsShell.class);
 
-    public DroolsShell(StatefulKnowledgeSession ksession) {
+    public DroolsShell(StatefulKnowledgeSession ksession, HashMap<String, CliCommand> commands, HashMap<Class<? extends Command<?>>, OutputBuilder<?>> outputBuilders) {
         this.currentSession = ksession;
+        this.commands = commands;
+        this.outputBuilders = outputBuilders;
     }
 
     public String run(String inputCommand, String... args) throws CommandNotFoundException{
@@ -44,6 +47,8 @@ public class DroolsShell {
             return uae.getMessage();
         } catch (HelpRequestedException hre) {
             return hre.getHelpMessage();
+        } catch (IllegalArgumentException iae) {
+            return iae.getMessage();
         }
         
         final OutputBuilder outputBuilder = outputBuilders.get(command.getClass());
@@ -59,15 +64,5 @@ public class DroolsShell {
 
     public Set<String> getCliCommandNames(){
         return Collections.unmodifiableSet(commands.keySet());
-    }
-
-    static{
-        commands = new HashMap<String, CliCommand>(){{
-            put("lsrules", new ListRulesCliCommand());
-        }};
-        outputBuilders = new HashMap<Class<? extends Command<?>>, OutputBuilder<?>>(){{
-            put(RulesByPackageCommand.class, new RulesByPackageOutputBuilder());
-            put(RulesForPackageCommand.class, new RulesForPackageOutputBuilder());
-        }};
     }
 }
