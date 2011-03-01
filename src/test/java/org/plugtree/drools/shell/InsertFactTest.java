@@ -21,7 +21,7 @@ import java.util.List;
 /**
  * creation date: 3/1/11
  */
-public class InsertFact extends CliCommandTest {
+public class InsertFactTest extends CliCommandTest {
 
     @Test
     public void runCommand() throws CommandNotFoundException {

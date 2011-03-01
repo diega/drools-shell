@@ -11,7 +11,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 /**
  * creation date: 3/1/11
  */
-public class ListFacts extends CliCommandTest {
+public class ListFactsTest extends CliCommandTest {
 
     @Test
     public void runCommand() throws CommandNotFoundException {
