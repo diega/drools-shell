@@ -21,7 +21,7 @@ import java.util.List;
 /**
  * creation date: 3/1/11
  */
-public class InsertFactCliCommandTest {
+public class InsertFact extends CliCommandTest {
 
     @Test
     public void runCommand() throws CommandNotFoundException {
@@ -33,22 +33,4 @@ public class InsertFactCliCommandTest {
         Assert.assertEquals(1, ksession.getObjects().size());
     }
 
-    private StatefulKnowledgeSession getStatefulKnowledgeSession() {
-        List<InputStream> rules = Arrays.asList(getClass().getResourceAsStream("/test1.drl"),
-                getClass().getResourceAsStream("/test2.drl")
-        );
-
-        KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder();
-        for(InputStream rule : rules ){
-            kbuilder.add(ResourceFactory.newInputStreamResource(rule), ResourceType.DRL);
-        }
-        if(kbuilder.hasErrors()){
-            throw new IllegalArgumentException(kbuilder.getErrors().toString());
-        }
-
-        KnowledgeBase kbase = KnowledgeBaseFactory.newKnowledgeBase();
-        kbase.addKnowledgePackages(kbuilder.getKnowledgePackages());
-
-        return kbase.newStatefulKnowledgeSession();
-    }
 }
