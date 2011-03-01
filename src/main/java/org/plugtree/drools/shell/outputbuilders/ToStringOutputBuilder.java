@@ -8,7 +8,7 @@ import java.util.Collection;
 public class ToStringOutputBuilder implements OutputBuilder<Collection<Object>>{
     @Override
     public String getOutput(Collection<Object> objects) {
-        if(objects.isEmpty())
+        if(objects.size() == 0)
             return "0 results found";
 
         StringBuilder builder = new StringBuilder();
