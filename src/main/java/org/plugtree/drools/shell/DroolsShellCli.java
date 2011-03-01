@@ -42,6 +42,8 @@ import org.plugtree.drools.shell.outputbuilders.RulesForPackageOutputBuilder;
 import org.plugtree.drools.shell.outputbuilders.ToStringOutputBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * creation date: 2/17/11
@@ -127,27 +129,9 @@ public class DroolsShellCli {
             Thread.currentThread().setContextClassLoader(urlClassLoader);
         }
 
+        ApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath:/context.xml");
 
-
-        final ConsoleReader reader = new ConsoleReader();
-        reader.setBellEnabled(false);
-        Map<String,CliCommand> commands = new HashMap<String, CliCommand>() {{
-            put("lsrules", new ListRulesCliCommand());
-            put("insert", new InsertFactCliCommand(reader));
-            put("lsfacts", new ListFactsCliCommand());
-        }};
-       Map<Class<? extends Command<?>>,OutputBuilder<?>> outputBuilders = new HashMap<Class<? extends Command<?>>, OutputBuilder<?>>() {{
-            put(RulesByPackageCommand.class, new RulesByPackageOutputBuilder());
-            put(RulesForPackageCommand.class, new RulesForPackageOutputBuilder());
-            put(InsertObjectCommand.class, new FactHandlerOutputBuilder());
-            put(GetObjectsCommand.class, new ToStringOutputBuilder());
-        }};
-        Set<String> cliCommandNames = commands.keySet();
-        reader.addCompletor(new SimpleCompletor(cliCommandNames.toArray(new String[cliCommandNames.size()])));
-
-        DroolsShell shell = new DroolsShell(commands, outputBuilders);
-        DroolsShellCli cli = new DroolsShellCli(reader, shell);
-
+        DroolsShellCli cli = applicationContext.getBean("cli", DroolsShellCli.class);
         cli.run(new StaticKnowledgeSessionProvider(rules));
     }
 

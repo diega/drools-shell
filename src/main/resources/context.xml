@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans 
+  xmlns="http://www.springframework.org/schema/beans"
+  xmlns:util="http://www.springframework.org/schema/util"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+                      http://www.springframework.org/schema/util     http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+
+  <bean id="cli" class="org.plugtree.drools.shell.DroolsShellCli">
+    <constructor-arg ref="reader"/>
+    <constructor-arg ref="shell"/>
+  </bean>
+
+  <bean id="shell" class="org.plugtree.drools.shell.DroolsShell">
+    <constructor-arg ref="commands"/>
+    <constructor-arg ref="outputBuilders"/>
+  </bean>
+
+  <bean id="reader" class="org.plugtree.drools.ext.spring.ConsoleReaderFactoryBean">
+    <property name="bellEnabled" value="true"/>
+    <property name="completors">
+      <list>
+        <bean class="org.plugtree.drools.ext.spring.SimpleCompletorForCommandsFactoryBean">
+          <property name="commands" ref="commands"/>
+        </bean>
+      </list>
+    </property>
+  </bean>
+
+  <util:map id="commands">
+    <entry key="lsrules">
+      <bean class="org.plugtree.drools.shell.commands.ListRulesCliCommand"/>
+    </entry>
+    <entry key="insert">
+      <bean class="org.plugtree.drools.shell.commands.InsertFactCliCommand">
+        <constructor-arg>
+          <ref bean="reader"/>
+        </constructor-arg>
+      </bean>
+    </entry>
+    <entry key="lsfacts">
+      <bean class="org.plugtree.drools.shell.commands.ListFactsCliCommand"/>
+    </entry>
+  </util:map>
+
+  <util:map id="outputBuilders">
+    <entry key="org.plugtree.drools.commands.RulesByPackageCommand">
+      <bean class="org.plugtree.drools.shell.outputbuilders.RulesByPackageOutputBuilder"/>
+    </entry>
+    <entry key="org.plugtree.drools.commands.RulesForPackageCommand">
+      <bean class="org.plugtree.drools.shell.outputbuilders.RulesForPackageOutputBuilder"/>
+    </entry>
+    <entry key="org.drools.command.runtime.rule.InsertObjectCommand">
+      <bean class="org.plugtree.drools.shell.outputbuilders.FactHandlerOutputBuilder"/>
+    </entry>
+    <entry key="org.drools.command.runtime.rule.GetObjectsCommand">
+      <bean class="org.plugtree.drools.shell.outputbuilders.ToStringOutputBuilder"/>
+    </entry>
+  </util:map>
+</beans>
