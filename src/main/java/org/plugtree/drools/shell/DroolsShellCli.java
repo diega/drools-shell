@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import jline.ConsoleReader;
@@ -22,10 +23,13 @@ import joptsimple.OptionSpec;
 import org.drools.command.Command;
 import org.drools.command.runtime.rule.GetObjectsCommand;
 import org.drools.command.runtime.rule.InsertObjectCommand;
+import org.drools.runtime.StatefulKnowledgeSession;
 import org.plugtree.drools.commands.RulesByPackageCommand;
 import org.plugtree.drools.commands.RulesForPackageCommand;
 import org.plugtree.drools.ext.KnowledgeBaseProvider;
 import org.plugtree.drools.ext.KnowledgeBaseProviderFromInputStreams;
+import org.plugtree.drools.ext.KnowledgeSessionProvider;
+import org.plugtree.drools.ext.StaticKnowledgeSessionProvider;
 import org.plugtree.drools.shell.commands.CliCommand;
 import org.plugtree.drools.shell.commands.InsertFactCliCommand;
 import org.plugtree.drools.shell.commands.ListFactsCliCommand;
@@ -48,31 +52,16 @@ public class DroolsShellCli {
     private ConsoleReader reader;
     private static final Logger logger = LoggerFactory.getLogger(DroolsShellCli.class);
 
-    public DroolsShellCli(KnowledgeBaseProvider kbaseProvider) throws IOException {
-        this.reader = new ConsoleReader();
-        this.reader.setBellEnabled(false);
-        HashMap<String,CliCommand> commands = new HashMap<String, CliCommand>() {{
-            put("lsrules", new ListRulesCliCommand());
-            put("insert", new InsertFactCliCommand(reader));
-            put("lsfacts", new ListFactsCliCommand());
-        }};
-        HashMap<Class<? extends Command<?>>,OutputBuilder<?>> outputBuilders = new HashMap<Class<? extends Command<?>>, OutputBuilder<?>>() {{
-            put(RulesByPackageCommand.class, new RulesByPackageOutputBuilder());
-            put(RulesForPackageCommand.class, new RulesForPackageOutputBuilder());
-            put(InsertObjectCommand.class, new FactHandlerOutputBuilder());
-            put(GetObjectsCommand.class, new ToStringOutputBuilder());
-        }};
-        Set<String> cliCommandNames = commands.keySet();
-        this.reader.addCompletor(new SimpleCompletor(cliCommandNames.toArray(new String[cliCommandNames.size()])));
-
-        this.shell = new DroolsShell(kbaseProvider.getKnowledgeBase().newStatefulKnowledgeSession(), commands, outputBuilders);
+    public DroolsShellCli(ConsoleReader reader, DroolsShell shell) {
+        this.shell = shell;
+        this.reader = reader;
     }
 
-    public void run() throws IOException {
+    public void run(KnowledgeSessionProvider ksessionProvider) throws IOException {
+        PrintWriter out = new PrintWriter(System.out);
+        StatefulKnowledgeSession ksession = ksessionProvider.getSession();
 
         String line;
-        PrintWriter out = new PrintWriter(System.out);
-
         while ((line = reader.readLine("drools> ")) != null) {
             line = line.trim();
 
@@ -91,7 +80,7 @@ public class DroolsShellCli {
                     args = line.substring(firstSpace + 1).split(" ");
                 }
                 logger.debug("command: {} | args {}", command, Arrays.toString(args));
-                out.print(shell.run(command, args));
+                out.print(shell.run(ksession, command, args));
             } catch (CommandNotFoundException cnfe) {
                 out.print(cnfe.getMessage());
             }
@@ -138,7 +127,28 @@ public class DroolsShellCli {
             Thread.currentThread().setContextClassLoader(urlClassLoader);
         }
 
-        DroolsShellCli shell = new DroolsShellCli(new KnowledgeBaseProviderFromInputStreams(rules));
-        shell.run();
+
+
+        final ConsoleReader reader = new ConsoleReader();
+        reader.setBellEnabled(false);
+        Map<String,CliCommand> commands = new HashMap<String, CliCommand>() {{
+            put("lsrules", new ListRulesCliCommand());
+            put("insert", new InsertFactCliCommand(reader));
+            put("lsfacts", new ListFactsCliCommand());
+        }};
+       Map<Class<? extends Command<?>>,OutputBuilder<?>> outputBuilders = new HashMap<Class<? extends Command<?>>, OutputBuilder<?>>() {{
+            put(RulesByPackageCommand.class, new RulesByPackageOutputBuilder());
+            put(RulesForPackageCommand.class, new RulesForPackageOutputBuilder());
+            put(InsertObjectCommand.class, new FactHandlerOutputBuilder());
+            put(GetObjectsCommand.class, new ToStringOutputBuilder());
+        }};
+        Set<String> cliCommandNames = commands.keySet();
+        reader.addCompletor(new SimpleCompletor(cliCommandNames.toArray(new String[cliCommandNames.size()])));
+
+        DroolsShell shell = new DroolsShell(commands, outputBuilders);
+        DroolsShellCli cli = new DroolsShellCli(reader, shell);
+
+        cli.run(new StaticKnowledgeSessionProvider(rules));
     }
+
 }

@@ -19,6 +19,6 @@ public class DroolsShellCliTest {
                 getClass().getResourceAsStream("/test1.drl"),
                 getClass().getResourceAsStream("/test2.drl")
         })));
-        shell.run();
+        shell.run(new StaticKnowledgeSessionProvider(rules));
     }
 }

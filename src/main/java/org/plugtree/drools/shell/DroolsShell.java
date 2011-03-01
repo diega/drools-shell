@@ -25,17 +25,15 @@ public class DroolsShell {
 
     private Map<String, CliCommand> commands;
     private Map<Class<? extends Command<?>>, OutputBuilder<?>> outputBuilders;
-    private StatefulKnowledgeSession currentSession;
 
     private static final Logger logger = LoggerFactory.getLogger(DroolsShell.class);
 
-    public DroolsShell(StatefulKnowledgeSession ksession, HashMap<String, CliCommand> commands, HashMap<Class<? extends Command<?>>, OutputBuilder<?>> outputBuilders) {
-        this.currentSession = ksession;
+    public DroolsShell(Map<String, CliCommand> commands, Map<Class<? extends Command<?>>, OutputBuilder<?>> outputBuilders) {
         this.commands = commands;
         this.outputBuilders = outputBuilders;
     }
 
-    public String run(String inputCommand, String... args) throws CommandNotFoundException{
+    public String run(StatefulKnowledgeSession ksession, String inputCommand, String... args) throws CommandNotFoundException{
         CliCommand cliCommand = commands.get(inputCommand);
         Command<?> command = null;
         if(null == cliCommand)
@@ -52,17 +50,13 @@ public class DroolsShell {
         }
         
         final OutputBuilder outputBuilder = outputBuilders.get(command.getClass());
-        Object executionResult = null;
+        Object executionResult;
         try {
-            executionResult = currentSession.execute(command);
+            executionResult = ksession.execute(command);
         } catch (Exception e){
             logger.trace("error executing command", e);
             return e.getMessage();
         }
         return outputBuilder.getOutput(executionResult);
-    }
-
-    public Set<String> getCliCommandNames(){
-        return Collections.unmodifiableSet(commands.keySet());
     }
 }
