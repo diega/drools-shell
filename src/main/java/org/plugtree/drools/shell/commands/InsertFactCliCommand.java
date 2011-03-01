@@ -10,9 +10,6 @@ import org.drools.command.Command;
 import org.drools.command.runtime.rule.InsertObjectCommand;
 import org.mvel2.CompileException;
 import org.mvel2.MVEL;
-import org.plugtree.drools.commands.DummyCommand;
-import org.plugtree.drools.commands.RulesByPackageCommand;
-import org.plugtree.drools.commands.RulesForPackageCommand;
 import org.plugtree.drools.shell.exceptions.HelpRequestedException;
 import org.plugtree.drools.shell.exceptions.UnknownArgumentException;
 import org.slf4j.Logger;
@@ -22,8 +19,6 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.*;
 
-import static java.lang.Class.*;
-
 /**
  * creation date: 2/20/11
  */
@@ -32,16 +27,19 @@ public class InsertFactCliCommand extends CliCommandSupport {
     private ConsoleReader reader;
     private OptionParser parser;
     private OptionSpec<String> classNameOpt;
-    private OptionSpec<Void> helpOpt;
+    private OptionSpec<String> fieldsOpt;
 
+    private OptionSpec<Void> helpOpt;
     private static final Logger logger = LoggerFactory.getLogger(InsertFactCliCommand.class);
 
     public InsertFactCliCommand(ConsoleReader reader) {
         this.reader = reader;
         parser = new OptionParser();
-        classNameOpt = parser.acceptsAll(Arrays.asList(new String[]{"c", "className"}), "Object class to insert")
+        classNameOpt = parser.acceptsAll(Arrays.asList("c", "className"), "Object class to insert")
                 .withRequiredArg().ofType(String.class);
-        helpOpt = parser.acceptsAll(Arrays.asList(new String[]{"?", "help", "h"}), "This help");
+        fieldsOpt = parser.acceptsAll(Arrays.asList("f", "fields"), "Comma separated list of fields")
+                .withRequiredArg().ofType(String.class).withValuesSeparatedBy(',');
+        helpOpt = parser.acceptsAll(Arrays.asList("?", "help", "h"), "This help");
     }
 
     @Override
@@ -56,7 +54,7 @@ public class InsertFactCliCommand extends CliCommandSupport {
         checkMandatoryOption(optionSet, classNameOpt);
 
         final String className = optionSet.valueOf(classNameOpt);
-        List<String> fields = new ArrayList<String>();
+        List<String> fields;
         Class<?> clazz = null;
         try {
             clazz = Thread.currentThread().getContextClassLoader().loadClass(className);
@@ -64,33 +62,10 @@ public class InsertFactCliCommand extends CliCommandSupport {
             throw new IllegalArgumentException("Class " + className +" not found", e);
         }
 
-        //remove parent completors
-        List<Completor> completors = new ArrayList<Completor>(reader.getCompletors());
-        for (Completor completor : completors){
-            reader.removeCompletor(completor);
-        }
-
-        reader.addCompletor(new SimpleCompletor(getFieldNames(clazz.getDeclaredFields())));
-
-        try {
-            String line;
-            String classPrompt = clazz.getSimpleName().toLowerCase();
-            while ((line = reader.readLine(classPrompt + "> ")) != null) {
-                line = line.trim();
-                //FIXME regex to check simple field=[']value[']
-                if("".equals(line))
-                    break;
-                fields.add(line);
-            }
-
-
-        } catch (IOException e) {
-            throw new IllegalArgumentException(e);
-        }
-
-        //readd parent completors
-        for (Completor completor : completors){
-            reader.addCompletor(completor);
+        if(optionSet.has(fieldsOpt)) {
+            fields = optionSet.valuesOf(fieldsOpt);
+        } else {
+            fields = requestUserInputForFields(clazz, reader);
         }
 
         try{
@@ -122,5 +97,39 @@ public class InsertFactCliCommand extends CliCommandSupport {
             fieldNames[i] = fields[i].getName();
         }
         return fieldNames;
+    }
+
+    private List<String> requestUserInputForFields(Class<?> clazz, ConsoleReader reader){
+        List<String> fields = new ArrayList<String>();
+        //remove parent completors
+        List<Completor> completors = new ArrayList<Completor>(reader.getCompletors());
+        for (Completor completor : completors){
+            reader.removeCompletor(completor);
+        }
+
+        reader.addCompletor(new SimpleCompletor(getFieldNames(clazz.getDeclaredFields())));
+
+        try {
+            String line;
+            String classPrompt = clazz.getSimpleName().toLowerCase();
+            while ((line = reader.readLine(classPrompt + "> ")) != null) {
+                line = line.trim();
+                //FIXME regex to check simple field=[']value[']
+                if("".equals(line))
+                    break;
+                fields.add(line);
+            }
+
+
+        } catch (IOException e) {
+            throw new IllegalArgumentException(e);
+        }
+
+        //readd parent completors
+        for (Completor completor : completors){
+            reader.addCompletor(completor);
+        }
+
+        return fields;
     }
 }
