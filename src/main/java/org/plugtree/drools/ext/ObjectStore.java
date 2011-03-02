@@ -23,4 +23,12 @@ public class ObjectStore {
     public Object get(int id){
         return accesedObjectStore.get(id);
     }
+
+    public void remove(int objectId) {
+        accesedObjectStore.remove(objectId);
+    }
+
+    public boolean isEmpty() {
+        return accesedObjectStore.isEmpty();
+    }
 }
