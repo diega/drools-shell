@@ -46,6 +46,15 @@
     <entry key="lsfacts">
       <bean class="org.plugtree.drools.shell.commands.ListFactsCliCommand"/>
     </entry>
+    <entry key="retract">
+      <bean class="org.plugtree.drools.shell.commands.RetractFactCliCommand">
+        <constructor-arg>
+          <bean class="org.plugtree.drools.commands.ContextAwareRetractObjectCommand">
+            <constructor-arg ref="objectStore"/>
+          </bean>
+        </constructor-arg>
+      </bean>
+    </entry>
   </util:map>
 
   <util:map id="outputBuilders">
@@ -60,6 +69,9 @@
     </entry>
     <entry key="org.drools.command.runtime.rule.GetObjectsCommand">
       <bean class="org.plugtree.drools.shell.outputbuilders.ToStringOutputBuilder"/>
+    </entry>
+    <entry key="org.plugtree.drools.commands.ContextAwareRetractObjectCommand">
+      <bean class="org.plugtree.drools.shell.outputbuilders.RetractedObjectOutputBuilder"/>
     </entry>
   </util:map>
 </beans>
