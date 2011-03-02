@@ -7,7 +7,6 @@ import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
 import org.drools.command.Command;
-import org.drools.command.runtime.rule.InsertObjectCommand;
 import org.mvel2.CompileException;
 import org.mvel2.MVEL;
 import org.plugtree.drools.commands.ContextAwareInsertObjectCommand;
@@ -59,7 +58,7 @@ public class InsertFactCliCommand extends CliCommandSupport {
 
         final String className = optionSet.valueOf(classNameOpt);
         List<String> fields;
-        Class<?> clazz = null;
+        Class<?> clazz;
         try {
             clazz = Thread.currentThread().getContextClassLoader().loadClass(className);
         } catch (ClassNotFoundException e) {
