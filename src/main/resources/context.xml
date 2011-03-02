@@ -55,6 +55,9 @@
         </constructor-arg>
       </bean>
     </entry>
+    <entry key="fire">
+      <bean class="org.plugtree.drools.shell.commands.FireAllRulesCliCommand"/>
+    </entry>
   </util:map>
 
   <util:map id="outputBuilders">
@@ -72,6 +75,9 @@
     </entry>
     <entry key="org.plugtree.drools.commands.ContextAwareRetractObjectCommand">
       <bean class="org.plugtree.drools.shell.outputbuilders.RetractedObjectOutputBuilder"/>
+    </entry>
+    <entry key="org.drools.command.runtime.rule.FireAllRulesCommand">
+      <bean class="org.plugtree.drools.shell.outputbuilders.FireAllRulesOutputBuilder"/>
     </entry>
   </util:map>
 </beans>

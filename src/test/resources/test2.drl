@@ -1,1 +1,8 @@
 package shell.test2
+
+rule "insert dummy object"
+when
+    eval(true)
+then
+    insert(new Object());
+end
