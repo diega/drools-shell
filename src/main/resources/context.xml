@@ -27,14 +27,19 @@
     </property>
   </bean>
 
+  <bean id="objectStore" class="org.plugtree.drools.ext.ObjectStore"/>
+
   <util:map id="commands">
     <entry key="lsrules">
       <bean class="org.plugtree.drools.shell.commands.ListRulesCliCommand"/>
     </entry>
     <entry key="insert">
       <bean class="org.plugtree.drools.shell.commands.InsertFactCliCommand">
+        <constructor-arg ref="reader"/>
         <constructor-arg>
-          <ref bean="reader"/>
+          <bean class="org.plugtree.drools.commands.ContextAwareInsertObjectCommand">
+            <constructor-arg ref="objectStore"/>
+          </bean>
         </constructor-arg>
       </bean>
     </entry>
@@ -50,8 +55,8 @@
     <entry key="org.plugtree.drools.commands.RulesForPackageCommand">
       <bean class="org.plugtree.drools.shell.outputbuilders.RulesForPackageOutputBuilder"/>
     </entry>
-    <entry key="org.drools.command.runtime.rule.InsertObjectCommand">
-      <bean class="org.plugtree.drools.shell.outputbuilders.FactHandlerOutputBuilder"/>
+    <entry key="org.plugtree.drools.commands.ContextAwareInsertObjectCommand">
+      <bean class="org.plugtree.drools.shell.outputbuilders.InsertedObjectOutputBuilder"/>
     </entry>
     <entry key="org.drools.command.runtime.rule.GetObjectsCommand">
       <bean class="org.plugtree.drools.shell.outputbuilders.ToStringOutputBuilder"/>

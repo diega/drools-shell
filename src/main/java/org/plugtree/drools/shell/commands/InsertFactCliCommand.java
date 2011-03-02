@@ -10,6 +10,7 @@ import org.drools.command.Command;
 import org.drools.command.runtime.rule.InsertObjectCommand;
 import org.mvel2.CompileException;
 import org.mvel2.MVEL;
+import org.plugtree.drools.commands.ContextAwareInsertObjectCommand;
 import org.plugtree.drools.shell.exceptions.HelpRequestedException;
 import org.plugtree.drools.shell.exceptions.UnknownArgumentException;
 import org.slf4j.Logger;
@@ -32,7 +33,9 @@ public class InsertFactCliCommand extends CliCommandSupport {
     private OptionSpec<Void> helpOpt;
     private static final Logger logger = LoggerFactory.getLogger(InsertFactCliCommand.class);
 
-    public InsertFactCliCommand(ConsoleReader reader) {
+    private ContextAwareInsertObjectCommand insertObjectCommand;
+
+    public InsertFactCliCommand(ConsoleReader reader, ContextAwareInsertObjectCommand insertObjectCommand) {
         this.reader = reader;
         parser = new OptionParser();
         classNameOpt = parser.acceptsAll(Arrays.asList("c", "className"), "Object class to insert")
@@ -40,6 +43,7 @@ public class InsertFactCliCommand extends CliCommandSupport {
         fieldsOpt = parser.acceptsAll(Arrays.asList("f", "fields"), "Comma separated list of fields")
                 .withRequiredArg().ofType(String.class).withValuesSeparatedBy(',');
         helpOpt = parser.acceptsAll(Arrays.asList("?", "help", "h"), "This help");
+        this.insertObjectCommand = insertObjectCommand;
     }
 
     @Override
@@ -70,7 +74,8 @@ public class InsertFactCliCommand extends CliCommandSupport {
 
         try{
             final Object outputObject = MVEL.eval(createMvelExpression(className, fields));
-            return new InsertObjectCommand(outputObject);
+            insertObjectCommand.setObject(outputObject);
+            return insertObjectCommand;
         } catch (CompileException re) {
             logger.error("error evaluating mvel expression", re);
             throw new IllegalArgumentException("Error creating object. Check logs for complete stacktrace");
