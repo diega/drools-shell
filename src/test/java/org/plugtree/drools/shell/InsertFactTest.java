@@ -10,6 +10,7 @@ import org.drools.runtime.StatefulKnowledgeSession;
 import org.junit.Assert;
 import org.junit.Test;
 import org.plugtree.drools.Person;
+import org.plugtree.drools.ext.ObjectStore;
 import org.plugtree.drools.shell.exceptions.CommandNotFoundException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -28,9 +29,10 @@ public class InsertFactTest extends CliCommandTest {
         ApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath:/context.xml");
         final DroolsShell shell = applicationContext.getBean("shell", DroolsShell.class);
         final StatefulKnowledgeSession ksession = getStatefulKnowledgeSession();
-        System.out.println(shell.run(ksession, "insert", "-c", Person.class.getName(), "-f", "name='robert',age=23"));
-
+        final String output = shell.run(ksession, "insert", "-c", Person.class.getName(), "-f", "name='robert',age=23");
+        Assert.assertNotNull(output);
         Assert.assertEquals(1, ksession.getObjects().size());
+        System.out.println(output);
     }
 
 }
