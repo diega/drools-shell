@@ -12,7 +12,7 @@ import org.plugtree.drools.shell.outputbuilders.InsertedObjectResult;
 /**
  * creation date: 3/1/11
  */
-public class ContextAwareInsertObjectCommand implements GenericCommand<InsertedObjectResult> {
+public class ContextAwareInsertObjectCommand implements GenericCommand<ObjectStoreOperationResult> {
 
     private ObjectStore objectStore;
     private InsertObjectCommand insertObjectCommand;
@@ -23,12 +23,12 @@ public class ContextAwareInsertObjectCommand implements GenericCommand<InsertedO
     }
 
     @Override
-    public InsertedObjectResult execute(Context context) {
+    public ObjectStoreOperationResult execute(Context context) {
         final FactHandle handle = insertObjectCommand.execute(context);
         StatefulKnowledgeSession ksession = ((KnowledgeCommandContext) context).getStatefulKnowledgesession();
         final Object insertedObject = ksession.getObject(handle);
         final int assignedId = objectStore.put(insertedObject);
-        return new InsertedObjectResult(assignedId, insertedObject);
+        return new ObjectStoreOperationResult(assignedId, insertedObject);
     }
 
     public void setObject(Object object) {

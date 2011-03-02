@@ -1,14 +1,14 @@
-package org.plugtree.drools.shell.outputbuilders;
+package org.plugtree.drools.commands;
 
 /**
  * creation date: 3/2/11
  */
-public class InsertedObjectResult {
+public class ObjectStoreOperationResult {
 
     private Object insertedObject;
     private int id;
 
-    public InsertedObjectResult(int id, Object insertedObject) {
+    public ObjectStoreOperationResult(int id, Object insertedObject) {
         this.id = id;
         this.insertedObject = insertedObject;
     }
