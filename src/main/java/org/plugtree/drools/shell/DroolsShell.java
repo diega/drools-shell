@@ -49,13 +49,16 @@ public class DroolsShell {
             return iae.getMessage();
         }
         
-        final OutputBuilder outputBuilder = outputBuilders.get(command.getClass());
         Object executionResult;
         try {
             executionResult = ksession.execute(command);
         } catch (Exception e){
             logger.trace("error executing command", e);
             return e.getMessage();
+        }
+        final OutputBuilder outputBuilder = outputBuilders.get(command.getClass());
+        if(outputBuilder == null) {
+            throw new RuntimeException( "Unable to find output builder for: " + command.getClass());
         }
         return outputBuilder.getOutput(executionResult);
     }
