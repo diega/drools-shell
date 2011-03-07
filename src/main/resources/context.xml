@@ -79,5 +79,8 @@
     <entry key="org.drools.command.runtime.rule.FireAllRulesCommand">
       <bean class="org.plugtree.drools.shell.outputbuilders.FireAllRulesOutputBuilder"/>
     </entry>
+    <entry key="org.plugtree.drools.commands.VerboseFireAllRules">
+      <bean class="org.plugtree.drools.shell.outputbuilders.FireAllRulesOutputBuilder"/>
+    </entry>
   </util:map>
 </beans>

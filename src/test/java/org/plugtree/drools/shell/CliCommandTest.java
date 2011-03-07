@@ -19,11 +19,7 @@ import java.util.List;
  */
 public abstract class CliCommandTest {
 
-    protected StatefulKnowledgeSession getStatefulKnowledgeSession() {
-        List<InputStream> rules = Arrays.asList(getClass().getResourceAsStream("/test1.drl"),
-                getClass().getResourceAsStream("/test2.drl")
-        );
-
+    protected StatefulKnowledgeSession getStatefulKnowledgeSession(List<InputStream> rules) {
         KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder();
         for(InputStream rule : rules ){
             kbuilder.add(ResourceFactory.newInputStreamResource(rule), ResourceType.DRL);
@@ -36,5 +32,11 @@ public abstract class CliCommandTest {
         kbase.addKnowledgePackages(kbuilder.getKnowledgePackages());
 
         return kbase.newStatefulKnowledgeSession();
+    }
+
+    protected StatefulKnowledgeSession getStatefulKnowledgeSession() {
+        return getStatefulKnowledgeSession(Arrays.asList(getClass().getResourceAsStream("/test1.drl"),
+                getClass().getResourceAsStream("/test2.drl")
+        ));
     }
 }
