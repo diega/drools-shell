@@ -16,10 +16,10 @@
       <fileMode>0744</fileMode>
       <filtered>true</filtered>
     </file>
-    <!--file>
-      <source>src/main/dist/log4j.xml</source>
+    <file>
+      <source>src/main/dist/logback.groovy</source>
       <fileMode>0644</fileMode>
-    </file-->
+    </file>
   </files>
   <dependencySets>
     <dependencySet>
