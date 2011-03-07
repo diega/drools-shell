@@ -1,7 +1,7 @@
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder
 import ch.qos.logback.core.FileAppender
 
-import static ch.qos.logback.classic.Level.DEBUG
+import static ch.qos.logback.classic.Level.*
 
 scan('5 minutes')
 setupAppenders()
@@ -16,6 +16,7 @@ def setupAppenders() {
         }
     }
 
+    logger("org.springframework", INFO)
     root(DEBUG, ["FILE"])
 
 }

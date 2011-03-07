@@ -64,6 +64,18 @@
       <groupId>org.springframework</groupId>
       <artifactId>spring-context</artifactId>
       <version>3.0.3.RELEASE</version>
+      <exclusions>
+         <exclusion>
+           <groupId>commons-logging</groupId>
+           <artifactId>commons-logging</artifactId>
+         </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+       <groupId>org.slf4j</groupId>
+       <artifactId>jcl-over-slf4j</artifactId>
+       <version>1.6.1</version>
+       <scope>runtime</scope>
     </dependency>
   </dependencies>
 
