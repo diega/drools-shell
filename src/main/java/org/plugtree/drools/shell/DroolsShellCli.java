@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -33,6 +34,7 @@ public class DroolsShellCli {
     private DroolsShell shell;
     private ConsoleReader reader;
     private static final Logger logger = LoggerFactory.getLogger(DroolsShellCli.class);
+    private OutputStream output;
 
     public DroolsShellCli(ConsoleReader reader, DroolsShell shell) {
         this.shell = shell;
@@ -40,7 +42,7 @@ public class DroolsShellCli {
     }
 
     public void run(KnowledgeSessionProvider ksessionProvider) throws IOException {
-        PrintWriter out = new PrintWriter(System.out);
+        PrintWriter out = new PrintWriter(getOutput());
         StatefulKnowledgeSession ksession = ksessionProvider.getSession();
 
         String line;
@@ -115,4 +117,13 @@ public class DroolsShellCli {
         cli.run(new StaticKnowledgeSessionProvider(rules));
     }
 
+    public OutputStream getOutput() {
+        if( output == null )
+            output = System.out;
+        return output;
+    }
+
+    public void setOutput(OutputStream output) {
+        this.output = output;
+    }
 }
