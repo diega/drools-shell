@@ -16,20 +16,31 @@ It'll open a command prompt ready to call any of the drools-shell commands
 For information about supported arguments run:
     $ ./drools.sh --help 
 
+### Microsoft Windows users
+Drools Shell should be able to run into Microsoft Windows systems but it has never been tested (running drools.bat instead of drools.sh)
+
 Commands
 --------
 The following commands are supported:
+
 * lsrules
 * lsfacts
 * insert
 * retract
 * fire
-For information about arguments call each command with the --help argument inside the shell.
+
+For information about arguments call each command with the `--help` argument inside the shell.
 
 Hacking
 -------
 All the configuration is Spring based, so should be easy for anyone to understand how different layers are organized. In src/main/resources/context.xml you will find every command and which class implements its behavior.
 The most relevant interfaces are:
+
 * org.plugtree.drools.shell.commands.CliCommand
 * org.plugtree.drools.shell.outputbuilders.OutputBuilder<T>
-Take a look into the TODO file to get an idea from where to begin if you are willing to help.
+
+For development purposes you can run the shell standing into the root of the project codebase with:
+     mvn exec:java -Dexec.args="--help"
+You can pass to -Dexec.args any argument you want, --help here is for the sake of the example.
+
+Take a look into the `TODO` file to get an idea from where to begin if you are willing to help.
