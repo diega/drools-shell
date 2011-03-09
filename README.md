@@ -43,4 +43,4 @@ For development purposes you can run the shell standing into the root of the pro
      mvn exec:java -Dexec.args="--help"
 You can pass to -Dexec.args any argument you want, --help here is for the sake of the example.
 
-Take a look into the `TODO` file to get an idea from where to begin if you are willing to help.
+Take a look into the [issues](https://github.com/diega/drools-shell/issues) page to get an idea from where to begin if you are willing to help.
