@@ -33,7 +33,7 @@ For information about arguments call each command with the `--help` argument ins
 
 Hacking
 -------
-All the configuration is Spring based, so should be easy for anyone to understand how different layers are organized. In src/main/resources/context.xml you will find every command and which class implements its behavior.
+All the configuration is Spring based, so should be easy for anyone to understand how different layers are organized. In `src/main/resources/context.xml` you will find every command and which class implements its behavior.
 The most relevant interfaces are:
 
 * org.plugtree.drools.shell.commands.CliCommand
