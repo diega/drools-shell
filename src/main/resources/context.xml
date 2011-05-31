@@ -6,81 +6,81 @@
   xsi:schemaLocation="http://www.springframework.org/schema/beans    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
                       http://www.springframework.org/schema/util     http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 
-  <bean id="cli" class="org.plugtree.drools.shell.DroolsShellCli">
+  <bean id="cli" class="com.locademiaz.drools.shell.DroolsShellCli">
     <constructor-arg ref="reader"/>
     <constructor-arg ref="shell"/>
   </bean>
 
-  <bean id="shell" class="org.plugtree.drools.shell.DroolsShell">
+  <bean id="shell" class="com.locademiaz.drools.shell.DroolsShell">
     <constructor-arg ref="commands"/>
     <constructor-arg ref="outputBuilders"/>
   </bean>
 
-  <bean id="reader" class="org.plugtree.drools.ext.spring.ConsoleReaderFactoryBean">
+  <bean id="reader" class="com.locademiaz.drools.ext.spring.ConsoleReaderFactoryBean">
     <property name="bellEnabled" value="true"/>
     <property name="completors">
       <list>
-        <bean class="org.plugtree.drools.ext.spring.SimpleCompletorForCommandsFactoryBean">
+        <bean class="com.locademiaz.drools.ext.spring.SimpleCompletorForCommandsFactoryBean">
           <property name="commands" ref="commands"/>
         </bean>
       </list>
     </property>
   </bean>
 
-  <bean id="objectStore" class="org.plugtree.drools.ext.ObjectStore"/>
+  <bean id="objectStore" class="com.locademiaz.drools.ext.ObjectStore"/>
 
   <util:map id="commands">
     <entry key="lsrules">
-      <bean class="org.plugtree.drools.shell.commands.ListRulesCliCommand"/>
+      <bean class="com.locademiaz.drools.shell.commands.ListRulesCliCommand"/>
     </entry>
     <entry key="insert">
-      <bean class="org.plugtree.drools.shell.commands.InsertFactCliCommand">
+      <bean class="com.locademiaz.drools.shell.commands.InsertFactCliCommand">
         <constructor-arg ref="reader"/>
         <constructor-arg>
-          <bean class="org.plugtree.drools.commands.ContextAwareInsertObjectCommand">
+          <bean class="com.locademiaz.drools.commands.ContextAwareInsertObjectCommand">
             <constructor-arg ref="objectStore"/>
           </bean>
         </constructor-arg>
       </bean>
     </entry>
     <entry key="lsfacts">
-      <bean class="org.plugtree.drools.shell.commands.ListFactsCliCommand"/>
+      <bean class="com.locademiaz.drools.shell.commands.ListFactsCliCommand"/>
     </entry>
     <entry key="retract">
-      <bean class="org.plugtree.drools.shell.commands.RetractFactCliCommand">
+      <bean class="com.locademiaz.drools.shell.commands.RetractFactCliCommand">
         <constructor-arg>
-          <bean class="org.plugtree.drools.commands.ContextAwareRetractObjectCommand">
+          <bean class="com.locademiaz.drools.commands.ContextAwareRetractObjectCommand">
             <constructor-arg ref="objectStore"/>
           </bean>
         </constructor-arg>
       </bean>
     </entry>
     <entry key="fire">
-      <bean class="org.plugtree.drools.shell.commands.FireAllRulesCliCommand"/>
+      <bean class="com.locademiaz.drools.shell.commands.FireAllRulesCliCommand"/>
     </entry>
   </util:map>
 
   <util:map id="outputBuilders">
-    <entry key="org.plugtree.drools.commands.RulesByPackageCommand">
-      <bean class="org.plugtree.drools.shell.outputbuilders.RulesByPackageOutputBuilder"/>
+    <entry key="com.locademiaz.drools.commands.RulesByPackageCommand">
+      <bean class="com.locademiaz.drools.shell.outputbuilders.RulesByPackageOutputBuilder"/>
     </entry>
-    <entry key="org.plugtree.drools.commands.RulesForPackageCommand">
-      <bean class="org.plugtree.drools.shell.outputbuilders.RulesForPackageOutputBuilder"/>
+    <entry key="com.locademiaz.drools.commands.RulesForPackageCommand">
+      <bean class="com.locademiaz.drools.shell.outputbuilders.RulesForPackageOutputBuilder"/>
     </entry>
-    <entry key="org.plugtree.drools.commands.ContextAwareInsertObjectCommand">
-      <bean class="org.plugtree.drools.shell.outputbuilders.InsertedObjectOutputBuilder"/>
+    <entry key="com.locademiaz.drools.commands.ContextAwareInsertObjectCommand">
+      <bean class="com.locademiaz.drools.shell.outputbuilders.InsertedObjectOutputBuilder"/>
     </entry>
     <entry key="org.drools.command.runtime.rule.GetObjectsCommand">
-      <bean class="org.plugtree.drools.shell.outputbuilders.ToStringOutputBuilder"/>
+      <bean class="com.locademiaz.drools.shell.outputbuilders.ToStringOutputBuilder"/>
     </entry>
-    <entry key="org.plugtree.drools.commands.ContextAwareRetractObjectCommand">
-      <bean class="org.plugtree.drools.shell.outputbuilders.RetractedObjectOutputBuilder"/>
+    <entry key="com.locademiaz.drools.commands.ContextAwareRetractObjectCommand">
+      <bean class="com.locademiaz.drools.shell.outputbuilders.RetractedObjectOutputBuilder"/>
     </entry>
     <entry key="org.drools.command.runtime.rule.FireAllRulesCommand">
-      <bean class="org.plugtree.drools.shell.outputbuilders.FireAllRulesOutputBuilder"/>
+      <bean class="com.locademiaz.drools.shell.outputbuilders.FireAllRulesOutputBuilder"/>
     </entry>
-    <entry key="org.plugtree.drools.commands.VerboseFireAllRules">
-      <bean class="org.plugtree.drools.shell.outputbuilders.FireAllRulesOutputBuilder"/>
+    <entry key="com.locademiaz.drools.commands.VerboseFireAllRules">
+      <bean class="com.locademiaz.drools.shell.outputbuilders.FireAllRulesOutputBuilder"/>
     </entry>
   </util:map>
 </beans>

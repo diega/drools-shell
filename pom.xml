@@ -95,7 +95,7 @@
         <artifactId>exec-maven-plugin</artifactId>
         <version>1.2</version>
         <configuration>
-          <mainClass>org.plugtree.drools.shell.DroolsShellCli</mainClass>
+          <mainClass>com.locademiaz.drools.shell.DroolsShellCli</mainClass>
         </configuration>
       </plugin>
       <plugin>
@@ -105,7 +105,7 @@
         <configuration>
           <archive>
             <manifest>
-              <mainClass>org.plugtree.drools.shell.DroolsShellCli</mainClass>
+              <mainClass>com.locademiaz.drools.shell.DroolsShellCli</mainClass>
               <addClasspath>true</addClasspath>
 <!--              <classpathPrefix>libs/</classpathPrefix>-->
               <customClasspathLayout>lib/${artifact.artifactId}-${artifact.version}${dashClassifier?}.${artifact.extension}</customClasspathLayout>
