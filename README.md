@@ -36,8 +36,8 @@ Hacking
 All the configuration is Spring based, so should be easy for anyone to understand how different layers are organized. In `src/main/resources/context.xml` you will find every command and which class implements its behavior.
 The most relevant interfaces are:
 
-* org.plugtree.drools.shell.commands.CliCommand
-* org.plugtree.drools.shell.outputbuilders.OutputBuilder<T>
+* com.locademiaz.drools.shell.commands.CliCommand
+* com.locademiaz.drools.shell.outputbuilders.OutputBuilder<T>
 
 For development purposes you can run the shell standing into the root of the project codebase with:
      mvn exec:java -Dexec.args="--help"
