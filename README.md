@@ -5,15 +5,19 @@ The aim of this project is to provide a simple command line interface for test r
 Running
 -------
 At the moment there is no stable release, so to build the tarball you should do it from source.
+
     $ git clone git://github.com/diega/drools-shell.git
     $ cd drools-shell
     $ mvn assembly:assembly
 After running this commands you will get a .tar.gz file into the target/ folder.
 Extract that file into your desired destination and run:
+
     $ ./drools.sh
 It'll open a command prompt ready to call any of the drools-shell commands
+
     drools>
 For information about supported arguments run:
+
     $ ./drools.sh --help 
 
 ### Microsoft Windows users
